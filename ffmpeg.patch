@@ -1,0 +1,38 @@
+diff --git a/libavcodec/videotoolbox.c b/libavcodec/videotoolbox.c
+index e42fea6..c8ac102 100644
+--- a/libavcodec/videotoolbox.c
++++ b/libavcodec/videotoolbox.c
+@@ -39,6 +39,8 @@
+ #include <AvailabilityMacros.h>
+ #include <TargetConditionals.h>
+ 
++#undef HAVE_KCVPIXELFORMATTYPE_420YPCBCR10BIPLANARVIDEORANGE
++
+ #ifndef kVTVideoDecoderSpecification_RequireHardwareAcceleratedVideoDecoder
+ #  define kVTVideoDecoderSpecification_RequireHardwareAcceleratedVideoDecoder CFSTR("RequireHardwareAcceleratedVideoDecoder")
+ #endif
+@@ -783,9 +785,9 @@ static CFDictionaryRef videotoolbox_buffer_attributes_create(int width,
+     CFDictionarySetValue(buffer_attributes, kCVPixelBufferWidthKey, w);
+     CFDictionarySetValue(buffer_attributes, kCVPixelBufferHeightKey, h);
+ #if TARGET_OS_IPHONE
+-    CFDictionarySetValue(buffer_attributes, kCVPixelBufferOpenGLESCompatibilityKey, kCFBooleanTrue);
++    CFDictionarySetValue(buffer_attributes, kCVPixelBufferMetalCompatibilityKey, kCFBooleanTrue);
+ #else
+-    CFDictionarySetValue(buffer_attributes, kCVPixelBufferIOSurfaceOpenGLTextureCompatibilityKey, kCFBooleanTrue);
++    CFDictionarySetValue(buffer_attributes, kCVPixelBufferMetalCompatibilityKey, kCFBooleanTrue);
+ #endif
+ 
+     CFRelease(io_surface_properties);
+diff --git a/libavformat/aviobuf.c b/libavformat/aviobuf.c
+index 4ad734a..f29030c 100644
+--- a/libavformat/aviobuf.c
++++ b/libavformat/aviobuf.c
+@@ -34,7 +34,7 @@
+ #include "url.h"
+ #include <stdarg.h>
+ 
+-#define IO_BUFFER_SIZE 32768
++#define IO_BUFFER_SIZE 32768*32
+ 
+ /**
+  * Do seeks within this distance ahead of the current buffer by skipping
